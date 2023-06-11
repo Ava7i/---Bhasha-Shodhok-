@@ -1,0 +1,18 @@
+version: "3.1"
+
+intents:
+ 
+  - correct
+  - incorrect
+  
+actions:
+  - action_correct_sentence
+
+templates:
+  action_correct_answer:
+    - text: ""
+
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
