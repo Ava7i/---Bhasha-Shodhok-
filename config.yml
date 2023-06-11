@@ -1,0 +1,127 @@
+recipe: default.v1
+language: bn
+
+pipeline:
+  # - name: WhitespaceTokenizer
+  # # Flag to check whether to split intents
+  #   intent_tokenization_flag: False
+  #  # Symbol on which intent should be split
+  #   intent_split_symbol: "_"
+  #  # Regular expression to detect tokens
+  #   token_pattern: None  
+ 
+  - name: SpacyNLP
+  # language model to load
+    model: en_core_web_md
+    case_sensitive: False
+    
+  - name: SpacyTokenizer
+  # Flag to check whether to split intents
+    intent_tokenization_flag: False
+  # Symbol on which intent should be split
+    intent_split_symbol: "_"
+  # Regular expression to detect tokens
+    token_pattern: None  
+    alias: token
+    
+  - name: SpacyFeaturizer
+  # Specify what pooling operation should be used to calculate the vector of
+  # the complete utterance. Available options: 'mean' and 'max'.
+    pooling: "mean"
+    alias: ft
+
+  - name: RegexFeaturizer
+    alias: regx 
+  # - name: LexicalSyntacticFeaturizer
+  #    alias:lex
+  - name: CountVectorsFeaturizer
+    alias: cvf
+  - name: CountVectorsFeaturizer
+    analyzer: char_wb
+    min_ngram: 1
+    max_ngram: 4
+    alias: cvf2
+  - name: LanguageModelFeaturizer
+    model_name: "bert"
+    model_weights: "Language_Model/bangla-bert-base"
+    cache_dir: "Language_Model/bangla-bert-base/cache"
+    alias: "dbert"
+  - name: DIETClassifier
+    alias: nlp_model
+    epochs: 1000
+    learning_rate: 0.0001
+    batch_size: 32
+    constrain_similarities: true
+    featurizers: [ "token","ft", "regx", "cvf1", "cvf2", "dbert"]
+  - name: EntitySynonymMapper
+  - name: ResponseSelector
+    epochs: 100
+    constrain_similarities: true
+  - name: FallbackClassifier
+    threshold: 0.5
+    ambiguity_threshold: 0.1
+
+# Response selector for Expense Intent
+
+  - name: ResponseSelector
+    epochs: 300
+    learning_rate: 0.001
+    batch_size: 32
+    embedding_dimension: 1024
+    number_of_transformer_layers: 2
+    number_of_attention_heads: 16
+    transformer_size: 128
+    connection_density: 0.3
+    drop_rate: 0.5
+    dense_dimension:
+      text: 32
+      label: 32
+    concat_dimension:
+      text: 32
+      label: 32
+    constrain_similarities: true
+    use_masked_language_model: false
+    random_seed: 42
+    featurizers: ["token","ft"," regx", "cvf1", "cvf2", "dbert"]
+    retrieval_intent: সঠিক বাক্য 
+    
+    # Response selector for Expense Intent
+
+  - name: ResponseSelector
+    epochs: 300
+    learning_rate: 0.001
+    batch_size: 32
+    embedding_dimension: 1024
+    number_of_transformer_layers: 2
+    number_of_attention_heads: 16
+    transformer_size: 128
+    connection_density: 0.3
+    drop_rate: 0.5
+    dense_dimension:
+      text: 32
+      label: 32
+    concat_dimension:
+      text: 32
+      label: 32
+    constrain_similarities: true
+    use_masked_language_model: false
+    random_seed: 42
+    featurizers: [ "token","ft", "regx", "cvf1", "cvf2", "dbert"]
+    retrieval_intent: ভুল বাক্য 
+policies:
+  - name: MemoizationPolicy
+  - name: RulePolicy
+  - name: UnexpecTEDIntentPolicy
+    max_history: 5
+    epochs: 100
+  - name: TEDPolicy
+    max_history: 5
+    epochs: 100
+    constrain_similarities: true
+    policies:
+  - name: "KerasPolicy"
+  - name: "MemoizationPolicy"
+  - name: "FallbackPolicy"
+    nlu_threshold: 0.5
+    core_threshold: 0.5
+    fallback_action_name: "action_check_sentence_correctness"
