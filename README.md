@@ -3,7 +3,7 @@
 <a href="https://github.com/banglakit"><img src="https://avatars3.githubusercontent.com/u/20180620?s=125&amp;v=4" width="125" height="125" align="right" /></a>
 
 # ভাষা-শোধক (Bhasha-Shodhok) 
-# Bangla Syntically Error checker & Generate Suggestion for Correct Sentence
+
 
 | Version Info | [![Python](https://img.shields.io/badge/python-v3.9.0-blue)](https://www.python.org/downloads/release/python-3900/) [![Platform](https://img.shields.io/badge/Platforms-Ubuntu%2022.04.4%20LTS%2C%20win--64-orange)](https://releases.ubuntu.com/22.04/) [![RASA](https://img.shields.io/badge/RASA-v3.4.0-navy)](https://rasa.com/) |
 | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
